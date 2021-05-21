@@ -1,8 +1,12 @@
 import Head from 'next/head'
 import Image from 'next/image'
+import { useTranslation } from 'react-i18next'
 import styles from '../styles/Home.module.css'
+import {serverSideTranslations} from 'next-i18next/serverSideTranslations';
+import DeviceDetector from "device-detector-js";
 
 export default function Home() {
+  const { t } = useTranslation();
   return (
     <div className={styles.container}>
       <Head>
@@ -17,8 +21,7 @@ export default function Home() {
         </h1>
 
         <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
+          {t('development')}
         </p>
 
         <div className={styles.grid}>
@@ -66,4 +69,22 @@ export default function Home() {
       </footer>
     </div>
   )
+}
+
+
+
+export const getServerSideProps = async ({ req, locale }) => {
+
+
+
+  const deviceDetector = new DeviceDetector();
+  const { device } = deviceDetector.parse(req.headers['user-agent']);
+  console.log(device);
+
+
+  return {
+    props: {
+      ...await serverSideTranslations(locale, ['common']),
+    }
+  }
 }
